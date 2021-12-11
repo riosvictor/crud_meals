@@ -3,13 +3,19 @@ defmodule ExmealWeb.MealsViewTest do
 
   import Phoenix.View
 
-  alias Exmeal.Meal
+  import Exmeal.Factory
+
+  alias Exmeal.{Meal, User}
 
   alias ExmealWeb.MealsView
 
   test "render create.json" do
-    params = %{description: "Banana", date: "2001-05-02 00:00:00", calories: "20"}
-    {_ok, meal} = Exmeal.create_meal(params)
+    user_params = build(:users_params)
+
+    {:ok, %User{id: user_id}} = Exmeal.create_user(user_params)
+
+    params = build(:meals_params, %{user_id: user_id})
+    {:ok, %Meal{id: id} = meal} = Exmeal.create_meal(params)
 
     response = render(MealsView, "create.json", meal: meal)
 
@@ -18,15 +24,20 @@ defmodule ExmealWeb.MealsViewTest do
                calories: 20.0,
                date: ~N[2001-05-02 00:00:00],
                description: "Banana",
-               id: _id
+               id: ^id,
+               user_id: ^user_id
              },
              message: "Meal created!"
            } = response
   end
 
   test "render meal.json" do
-    params = %{description: "Banana", date: "2001-05-02 00:00:00", calories: "20"}
-    {_ok, meal} = Exmeal.create_meal(params)
+    user_params = build(:users_params)
+
+    {:ok, %User{id: user_id}} = Exmeal.create_user(user_params)
+
+    params = build(:meals_params, %{user_id: user_id})
+    {:ok, %Meal{id: id} = meal} = Exmeal.create_meal(params)
 
     response = render(MealsView, "meal.json", meal: meal)
 
@@ -35,7 +46,8 @@ defmodule ExmealWeb.MealsViewTest do
                calories: 20.0,
                date: ~N[2001-05-02 00:00:00],
                description: "Banana",
-               id: _id
+               id: ^id,
+               user_id: ^user_id
              }
            } = response
   end

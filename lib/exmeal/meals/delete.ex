@@ -4,7 +4,7 @@ defmodule Exmeal.Meals.Delete do
   def call(id) do
     case Repo.get(Meal, id) do
       nil -> {:error, Error.build_meal_not_found_error()}
-      user -> Repo.delete(user)
+      meal -> Repo.delete(meal)
     end
   end
 end
